@@ -1,6 +1,6 @@
 const Restaurant = require('../models/Restaurant');
 const Sunbed = require('../models/Sunbed');
-const User = require('../models/user');
+const User = require('../models/User');
 
 
 async function createRestaurant(req, res) {
