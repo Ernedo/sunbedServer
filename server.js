@@ -46,7 +46,7 @@ app.get('/success', async (req, res) => {
   }
 })
 app.get('/cancel', (req, res) => res.send('Cancelled'));
-
+app.get('/',(req,res)=> res.send("server working"));
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
