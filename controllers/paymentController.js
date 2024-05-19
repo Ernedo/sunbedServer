@@ -68,14 +68,7 @@ exports.createOrder = async (amount) => {
 exports.capturePayment = async (orderId) => {
     const accessToken = await generateAccessToken()
     
-    // const response = await axios({
-    //     url: process.env.PAYPAL_BASE_URL + `/v2/checkout/orders/${orderId}/capture`,
-    //     method: 'post',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': 'Bearer ' + accessToken
-    //     }
-    // })
+  
     const response = await fetch('https://api-m.sandbox.paypal.com' + `/v2/checkout/orders/${orderId}/capture`, {
     method: 'POST',
     headers: {

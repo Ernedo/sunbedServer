@@ -31,9 +31,7 @@ app.use('/bookings', bookingRoutes);
 // app.use('/paypal', paypalRoutes);
 app.post('/pay', async (req, res) => {
   try {
-
     const url = await paypal.createOrder(req.query.amount)
-    console.log(url);
     res.redirect(url)
   } catch (error) {
     res.send('Error: ' + error)
