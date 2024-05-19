@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb+srv://ernedoselami:1Kiy9Qe2QxrHaKNE@cluster0.de0yfwx.mongodb.net/Sunbed', {
+mongoose.connect('mongodb+srv://ernedoselami:1Kiy9Qe2QxrHaKNE@cluster0.de0yfwx.mongodb.net/Sunbed?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
