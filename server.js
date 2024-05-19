@@ -10,7 +10,7 @@ const { paypalPayment, capturePayment } = require('./controllers/paymentControll
 const paypal = require('paypal-rest-sdk');
 const app = express();
 app.use(cors({
-  origin: '*', // Replace with your frontend URL
+  origin: 'https://sunbed.al/', // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // If you need to send cookies or HTTP authentication
 }));
