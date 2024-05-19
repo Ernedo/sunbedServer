@@ -19,7 +19,6 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.4",
-    "node-fetch": "^2.7.0",
-    "paypal-rest-sdk": "^1.8.1"
+    "node-fetch": "^2.7.0"
   }
 }

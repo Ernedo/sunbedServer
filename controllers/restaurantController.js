@@ -1,26 +1,15 @@
 const Restaurant = require('../models/Restaurant');
 const Sunbed = require('../models/Sunbed');
-const User = require('../models/User');
-
+const User = require('../models/user');
 
 async function createRestaurant(req, res) {
-  const  restaurantData  = req.body;
-
+  const {restaurantData} = req.body;
   try {
-    // Create sunbed documents
-    const sunbeds = await Sunbed.insertMany(restaurantData.sunbeds);
-
-    // Extract ObjectId values from the created sunbeds
-    const sunbedIds = sunbeds.map(sunbed => sunbed._id);
-
-    // Replace sunbeds in restaurantData with their ObjectId values
-    restaurantData.sunbeds = sunbedIds;
-
     const newRestaurant = await Restaurant.create(restaurantData);
     res.status(201).json(newRestaurant);
   } catch (err) {
-    console.error('Error creating restaurant:', err.message, err.stack);
-    res.status(400).json({ message: 'Failed to create restaurant', error: err.message });
+    console.error('Error creating restaurant:', err);
+    res.status(400).json({ message: 'Failed to create restaurant' });
   }
 }
 
@@ -316,4 +305,6 @@ async function getSunbedPriceById(req, res) {
 }
 
 
-module.exports = { createRestaurant, getRestaurants, updateRestaurant, deleteRestaurant, getSunbedById, addSunbed,updateSunbed, deleteSunbed, getSunbedsByDate, getSunbedsByRestaurantId, getSunbedTypeById, getSunbedPriceById,getRestaurantById };
+
+
+module.exports = { createRestaurant,getRestaurants, updateRestaurant, deleteRestaurant, getSunbedById, addSunbed,updateSunbed, deleteSunbed, getSunbedsByDate, getSunbedsByRestaurantId, getSunbedTypeById, getSunbedPriceById,getRestaurantById };
