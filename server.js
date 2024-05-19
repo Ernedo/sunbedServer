@@ -18,7 +18,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb+srv://hamzahashmi:admin@sunbed.9nqn1h7.mongodb.net/', {
+mongoose.connect('mongodb+srv://ernedoselami:1Kiy9Qe2QxrHaKNE@cluster0.de0yfwx.mongodb.net/Sunbed', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
