@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-
+const setTokenCookie = require("../middleware/jwtToken")
 async function register(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -12,6 +12,7 @@ async function register(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ username, email, password: hashedPassword });
     await user.save();
+    setTokenCookie(res, user.id)
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error registering user:', error);
@@ -32,16 +33,11 @@ async function login(req, res) {
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
+    setTokenCookie(res, user.id);
     
-    const accessToken = jwt.sign({ id: user.id },"JWT_SECRET", { expiresIn: '1h' });
-    res.cookie('token', accessToken, {
-      httpOnly: true,
-      maxAge: 3600000 
-    });
-
     const userWithoutPassword = { ...user.toObject() };
     delete userWithoutPassword.password;
-    res.json({ user: userWithoutPassword ,token:accessToken});
+    res.json({ user: userWithoutPassword});
   } catch (err) {
     console.error('Error logging in:', err);
     res.status(500).json({ message: 'Internal server error' });
@@ -50,7 +46,7 @@ async function login(req, res) {
 
 async function getUser(req, res) {
   try {
-    const {token} = req.body;
+    const { token } = req.body;
     if (!token) {
       return res.status(200).json({ message: 'No token available.', user: null });
     }
@@ -59,13 +55,13 @@ async function getUser(req, res) {
       if (err) {
         return res.status(200).json({ message: 'Invalid token.', user: null });
       }
-      
+
       const userId = decoded.id;
       const user = await User.findById(userId).select('-password');
       if (!user) {
         return res.status(404).json({ message: 'User not found.', user: null });
       }
-      
+
       return res.status(200).json({ message: 'User found.', user: user });
     });
   } catch (err) {
@@ -74,5 +70,5 @@ async function getUser(req, res) {
   }
 }
 
-module.exports = { register, login ,getUser};
+module.exports = { register, login, getUser };
 

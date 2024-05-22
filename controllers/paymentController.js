@@ -13,69 +13,51 @@ async function generateAccessToken() {
     return response.data.access_token
 }
 
-exports.createOrder = async (amount) => {
-    const accessToken = await generateAccessToken()
-
+exports.createOrder = async (amount, returnUrl) => {
+    const accessToken = await generateAccessToken();
+  
     const response = await axios({
-        url: 'https://api-m.sandbox.paypal.com' + '/v2/checkout/orders',
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
-        },
-        data: JSON.stringify({
-            intent: 'CAPTURE',
-            purchase_units: [
-                {
-                    items: [
-                        {
-                            name: 'Sunbed Reserved',
-                            description: 'Sunbed Description',
-                            quantity: 1,
-                            unit_amount: {
-                                currency_code: 'USD',
-                                value: amount
-                            }
-                        }
-                    ],
-
-                    amount: {
-                        currency_code: 'USD',
-                        value: amount,
-                        breakdown: {
-                            item_total: {
-                                currency_code: 'USD',
-                                value: amount
-                            }
-                        }
-                    }
-                }
-            ],
-
-            application_context: {
-                return_url: 'http://localhost:5000' + '/complete-order',
-                cancel_url: 'http://localhost:5000' + '/cancel-order',
-                shipping_preference: 'NO_SHIPPING',
-                user_action: 'PAY_NOW',
-                brand_name: 'manfra.io'
+      url: 'https://api-m.sandbox.paypal.com/v2/checkout/orders',
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + accessToken
+      },
+      data: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: amount
             }
-        })
-    })
-
-    return response.data.links.find(link => link.rel === 'approve').href
-}
+          }
+        ],
+        application_context: {
+          return_url: `http://localhost:5000/complete-order?returnUrl=${encodeURIComponent(returnUrl)}`,
+          cancel_url: `http://localhost:5000/cancel-order?returnUrl=${encodeURIComponent(returnUrl)}`,
+          shipping_preference: 'NO_SHIPPING',
+          user_action: 'PAY_NOW'
+        }
+      })
+    });
+  
+    const approvalUrl = response.data.links.find(link => link.rel === 'approve').href;
+    return approvalUrl;
+  };
+  
 
 exports.capturePayment = async (orderId) => {
     const accessToken = await generateAccessToken()
-    
-  
+
+
     const response = await fetch('https://api-m.sandbox.paypal.com' + `/v2/checkout/orders/${orderId}/capture`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + accessToken
-    }
-});
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+        }
+    });
 
     return response.data
 }

@@ -7,10 +7,11 @@ const restaurantRoutes = require('./routes/restaurantRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const cors = require('cors');
 const paypal = require('./controllers/paymentController')
+
 // const paypalRoutes = require('./routes/paypalRoutes');
 const app = express();
 app.use(cors({
-  origin: '*', // Replace with your frontend URL
+  origin: 'http://localhost:3000', // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // If you need to send cookies or HTTP authentication
 }));
@@ -31,25 +32,37 @@ app.use('/bookings', bookingRoutes);
 // app.use('/paypal', paypalRoutes);
 app.post('/pay', async (req, res) => {
   try {
-    const url = await paypal.createOrder(req.query.amount)
-    res.redirect(url)
+    const { amount, returnUrl } = req.query;
+    const url = await paypal.createOrder(amount, returnUrl);
+    res.json({ url });
   } catch (error) {
-    res.send('Error: ' + error)
+    res.status(500).send('Error: ' + error);
   }
-})
+});
 
 app.get('/complete-order', async (req, res) => {
   try {
-    const response = await paypal.capturePayment(req.query.token)
-    res.status(200).json({ message: 'Sunbed Reserved' })
-  } catch (error) {
-    res.send('Error: ' + error)
-  }
-})
+    const { token, PayerID, returnUrl } = req.query;
+    await paypal.capturePayment(token);
 
+    // Parse and construct the return URL to avoid duplications
+    const url = new URL(decodeURIComponent(returnUrl));
+    url.searchParams.set('status', 'success');
+
+    res.redirect(url.toString());
+  } catch (error) {
+    res.status(500).send('Error: ' + error);
+  }
+});
 app.get('/cancel-order', (req, res) => {
-  res.redirect('/')
-})
+  const { returnUrl } = req.query;
+
+  // Parse and construct the return URL to avoid duplications
+  const url = new URL(decodeURIComponent(returnUrl));
+  url.searchParams.set('status', 'cancelled');
+
+  res.redirect(url.toString());
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
