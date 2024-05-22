@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const setTokenCookie = require("../middleware/jwtToken")
+
 async function register(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -34,10 +35,10 @@ async function login(req, res) {
       return res.status(401).json({ message: 'Invalid password' });
     }
     setTokenCookie(res, user.id);
-    
+    const token = jwt.sign({ id: user._id }, "JWT_SECRET", { expiresIn: '1h' });
     const userWithoutPassword = { ...user.toObject() };
     delete userWithoutPassword.password;
-    res.json({ user: userWithoutPassword});
+    res.json({ user: userWithoutPassword,token});
   } catch (err) {
     console.error('Error logging in:', err);
     res.status(500).json({ message: 'Internal server error' });
