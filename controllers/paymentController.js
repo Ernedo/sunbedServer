@@ -34,8 +34,8 @@ exports.createOrder = async (amount, returnUrl) => {
           }
         ],
         application_context: {
-          return_url: `http://localhost:5000/complete-order?returnUrl=${encodeURIComponent(returnUrl)}`,
-          cancel_url: `http://localhost:5000/cancel-order?returnUrl=${encodeURIComponent(returnUrl)}`,
+          return_url: `https://squid-app-ifsve.ondigitalocean.app/complete-order?returnUrl=${encodeURIComponent(returnUrl)}`,
+          cancel_url: `https://squid-app-ifsve.ondigitalocean.app/cancel-order?returnUrl=${encodeURIComponent(returnUrl)}`,
           shipping_preference: 'NO_SHIPPING',
           user_action: 'PAY_NOW'
         }
